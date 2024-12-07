@@ -241,6 +241,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Install libstdc++ and other dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libstdc++-10-dev
+          sudo apt-get install -y musl-tools
+
       - name: Initialization environment
         id: init
         env:
@@ -350,6 +356,8 @@ jobs:
       - name: Compile the OpenWrt
         id: compile
         run: |
+          export CXXFLAGS="-std=c++17"
+          export LDFLAGS="-lstdc++"
           cd openwrt/
           echo -e "$(nproc) thread compile"
           make -j$(($(nproc) + 1)) V=s || make -j1 || make -j1 V=s
